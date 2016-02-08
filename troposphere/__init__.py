@@ -7,6 +7,7 @@
 import json
 import re
 import types
+import collections
 
 from . import validators
 
@@ -435,23 +436,23 @@ class Template(object):
             self.version = "2010-09-09"
 
     def to_json(self, indent=4, sort_keys=True, separators=(',', ': ')):
-        t = {}
+        t = collections.OrderedDict()
         if self.description:
             t['Description'] = self.description
-        if self.metadata:
-            t['Metadata'] = self.metadata
-        if self.conditions:
-            t['Conditions'] = self.conditions
-        if self.mappings:
-            t['Mappings'] = self.mappings
-        if self.outputs:
-            t['Outputs'] = self.outputs
-        if self.parameters:
-            t['Parameters'] = self.parameters
         if self.version:
             t['AWSTemplateFormatVersion'] = self.version
+        if self.metadata:
+            t['Metadata'] = self.metadata
+        if self.parameters:
+            t['Parameters'] = self.parameters
+        if self.mappings:
+            t['Mappings'] = self.mappings
         t['Resources'] = self.resources
-
+        if self.conditions:
+            t['Conditions'] = self.conditions
+        if self.outputs:
+            t['Outputs'] = self.outputs
+        
         return json.dumps(t, cls=awsencode, indent=indent,
                           sort_keys=sort_keys, separators=separators)
 
